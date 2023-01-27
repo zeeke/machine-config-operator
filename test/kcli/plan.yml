@@ -1,0 +1,10 @@
+vm2:
+  image: fedora37
+  numcpus: 2
+  memory: 2048
+  cmds:
+  - yum -y install httpd
+  nets:
+    - default
+    - name: default
+      noconf: true
