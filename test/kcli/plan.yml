@@ -1,10 +1,25 @@
-vm2:
+vm3:
   image: fedora37
   numcpus: 2
   memory: 2048
   cmds:
-  - yum -y install httpd
+  - yum -y install openvswitch NetworkManager-ovs jq nmstate
+  - systemctl start openvswitch
+  - systemctl restart NetworkManager
+  files:
+    - origin: ./.data/configure-ovs.sh
+      path: /home/fedora/mcotest/configure-ovs.sh
+      render: False
+      mode: 755
   nets:
     - default
+    - name: default
+      noconf: true
+    - name: default
+      noconf: true
+    - name: default
+      noconf: true
+    - name: default
+      noconf: true
     - name: default
       noconf: true
