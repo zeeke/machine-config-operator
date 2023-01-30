@@ -2,15 +2,29 @@ vm3:
   image: fedora37
   numcpus: 2
   memory: 2048
+  # output logs from following commands can be found in guest path /var/log/cloud-init-output.log
   cmds:
   - yum -y install openvswitch NetworkManager-ovs jq nmstate
   - systemctl start openvswitch
   - systemctl restart NetworkManager
+  - cd /root/mcotest
+  - ./test/test-entrypoint.sh 2>&1 > /tmp/test-results.txt
+  finishfiles:
+  - origin: /tmp/test-results.txt
+    path: _data/test-results.txt
   files:
-    - origin: ./.data/configure-ovs.sh
-      path: /home/fedora/mcotest/configure-ovs.sh
+    - origin: ./_data/configure-ovs.sh
+      path: /root/mcotest/configure-ovs.sh
       render: False
       mode: 755
+    - origin: ./_data/shunit2
+      path: /root/mcotest/shunit2
+      render: Falsev
+      mode: 755
+    - origin: ./test/
+      path: /root/mcotest/test/
+  wait: true
+  user: root
   nets:
     - default
     - name: default
