@@ -19,10 +19,22 @@ vm3:
       mode: 755
     - origin: ./_data/shunit2
       path: /root/mcotest/shunit2
-      render: Falsev
+      render: False
       mode: 755
     - origin: ./test/
       path: /root/mcotest/test/
+    - path: /
+      origin: bonding
+    #- path: /etc/NetworkManager/system-connections/bond99.nmconnection
+    #  origin: bond99.nmconnection
+    #  mode: 600
+    #- path: /etc/NetworkManager/system-connections/bond99-slave-eth1.nmconnection
+    #  origin: bond99-slave-eth1.nmconnection
+    #  mode: 600
+    #- path: /etc/NetworkManager/system-connections/bond99-slave-eth2.nmconnection
+    #  origin: bond99-slave-eth2.nmconnection
+    #  mode: 600
+
   wait: true
   user: root
   nets:
