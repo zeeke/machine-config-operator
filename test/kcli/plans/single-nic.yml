@@ -1,0 +1,25 @@
+vm3:
+  image: fedora37
+  numcpus: 2
+  memory: 2048
+  # output logs from following commands can be found in guest path /var/log/cloud-init-output.log
+  cmds:
+  - yum -y install openvswitch NetworkManager-ovs jq nmstate
+  - systemctl start openvswitch
+  - systemctl restart NetworkManager
+  - /root/configure-ovs.sh OVNKubernetes  > /tmp/output.txt 2>&1
+  - nmstatectl show > /tmp/nmstate.txt
+  finishfiles:
+  - origin: /tmp/output.txt
+    path: {{ script_output_path }}
+  - origin: /tmp/nmstate.txt
+    path: {{ final_nmstate_path }}
+  files:
+    - origin: ../_data/configure-ovs.sh
+      path: /root/configure-ovs.sh
+      render: False
+      mode: 755
+  wait: true
+  user: root
+  nets:
+    - default

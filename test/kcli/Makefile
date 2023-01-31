@@ -18,4 +18,7 @@ _data/configure-ovs.sh: ../../templates/common/_base/files/configure-ovs-network
 
 _data/shunit2:
 	curl https://raw.githubusercontent.com/kward/shunit2/v2.1.8/shunit2 > _data/shunit2
+	chmod 755 _data/shunit2
 
+runtest:
+	./configure-ovs-network-test.sh
