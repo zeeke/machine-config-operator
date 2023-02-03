@@ -12,8 +12,8 @@ jobs:
       - name: Install kcli
         run: |
           curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | bash
-      #- name: Setup upterm session
-      #  uses: lhotari/action-upterm@v1
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
       - name: Run kcli tests
         timeout-minutes: 15
         run: |
