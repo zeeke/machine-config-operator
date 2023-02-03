@@ -8,8 +8,11 @@ jobs:
         run: |
           sudo apt update
           sudo apt install qemu libvirt-daemon-system genisoimage
+          id
           sudo adduser $USER libvirt
+          id
           newgrp libvirt
+          id
           sudo chmod a+rw /var/run/libvirt/libvirt-sock
       - uses: actions/checkout@v2
       - name: Install kcli
@@ -20,6 +23,7 @@ jobs:
       - name: Run kcli tests
         timeout-minutes: 30
         run: |
+          id
           sudo kcli create pool -p /var/lib/libvirt/images default
           sudo kcli download image fedora37
           newgrp libvirt <<EONG
