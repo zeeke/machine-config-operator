@@ -10,6 +10,7 @@ jobs:
           sudo apt install qemu libvirt-daemon-system genisoimage
           sudo adduser $USER libvirt
           newgrp libvirt
+          sudo chmod a+rw /var/run/libvirt/libvirt-sock
       - uses: actions/checkout@v2
       - name: Install kcli
         run: |
