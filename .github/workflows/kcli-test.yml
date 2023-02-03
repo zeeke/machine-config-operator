@@ -29,6 +29,8 @@ jobs:
           newgrp libvirt <<EONG
           id
           cd test/kcli
+          mkdir -p _output/test
+          kcli create plan -f plans/single-nic.yml -Poutput_dir=`pwd`/_output/test
           make runtest
           EONG
       - name: Archive output folder
