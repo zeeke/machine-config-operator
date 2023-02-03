@@ -5,12 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
-        #uses: docker/setup-qemu-action@v2
-        #with:
-        #  platforms: "x86-64"
         run: |
           sudo apt update
-          sudo apt install qemu libvirt-daemon-system
+          sudo apt install qemu libvirt-daemon-system genisoimage
       - uses: actions/checkout@v2
       - name: Install kcli
         run: |
@@ -20,5 +17,6 @@ jobs:
       - name: Run kcli tests
         run: |
           cd test/kcli
+          sudo kcli create pool -p /var/lib/libvirt/images default
           sudo kcli download image fedora37
           sudo make runtest
