@@ -1,9 +1,16 @@
 name: kcli-test
 on: [push]
 jobs:
-  requirements:
-    runs-on: libvirt
+  qemu:
+    runs-on: ubuntu-latest
     steps:
+      - name: Set up QEMU
+        #uses: docker/setup-qemu-action@v2
+        #with:
+        #  platforms: "x86-64"
+        run: |
+          apt update
+          apt install qemu libvirt-daemon-system
       - uses: actions/checkout@v2
       - name: Install kcli
         run: |
