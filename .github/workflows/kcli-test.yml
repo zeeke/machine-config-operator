@@ -18,4 +18,5 @@ jobs:
       - name: Run kcli tests
         run: |
           cd test/kcli
+          sudo kcli download image fedora37
           sudo make runtest
