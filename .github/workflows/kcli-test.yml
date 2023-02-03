@@ -8,19 +8,21 @@ jobs:
         run: |
           sudo apt update
           sudo apt install qemu libvirt-daemon-system genisoimage
+          sudo adduser $USER libvirt
       - uses: actions/checkout@v2
       - name: Install kcli
         run: |
           curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | bash
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      #- name: Setup upterm session
+      #  uses: lhotari/action-upterm@v1
       - name: Run kcli tests
         timeout-minutes: 15
         run: |
+          newgrp libvirt
           cd test/kcli
-          sudo kcli create pool -p /var/lib/libvirt/images default
-          sudo kcli download image fedora37
-          sudo make runtest
+          kcli create pool -p /var/lib/libvirt/images default
+          kcli download image fedora37
+          make runtest
       - name: Archive output folder
         uses: actions/upload-artifact@v3
         if: always()
