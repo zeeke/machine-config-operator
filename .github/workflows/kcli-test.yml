@@ -9,6 +9,7 @@ jobs:
           sudo apt update
           sudo apt install qemu libvirt-daemon-system genisoimage
           sudo adduser $USER libvirt
+          newgrp libvirt
       - uses: actions/checkout@v2
       - name: Install kcli
         run: |
@@ -20,8 +21,8 @@ jobs:
         run: |
           newgrp libvirt
           cd test/kcli
-          kcli create pool -p /var/lib/libvirt/images default
-          kcli download image fedora37
+          sudo kcli create pool -p /var/lib/libvirt/images default
+          sudo kcli download image fedora37
           make runtest
       - name: Archive output folder
         uses: actions/upload-artifact@v3
