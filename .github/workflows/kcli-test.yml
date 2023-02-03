@@ -17,4 +17,5 @@ jobs:
           curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | bash
       - name: Run kcli tests
         run: |
-          cd test/kcli && make runtest
+          cd test/kcli
+          sudo make runtest
