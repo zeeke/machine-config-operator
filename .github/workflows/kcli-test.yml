@@ -1,0 +1,14 @@
+name: kcli-test
+on: [push]
+jobs:
+  requirements:
+    runs-on: libvirt
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install kcli
+        run: |
+          curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | bash
+          kcli create sushy-service
+      - name: Run kcli tests
+        run: |
+          cd test/kcli && make runtest
