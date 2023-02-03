@@ -12,11 +12,17 @@ jobs:
       - name: Install kcli
         run: |
           curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | bash
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      #- name: Setup upterm session
+      #  uses: lhotari/action-upterm@v1
       - name: Run kcli tests
         run: |
           cd test/kcli
           sudo kcli create pool -p /var/lib/libvirt/images default
           sudo kcli download image fedora37
-          sudo make runtest
+          sudo timeout 600 make runtest
+      - name: Archive output folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: test/kcli/_output
+

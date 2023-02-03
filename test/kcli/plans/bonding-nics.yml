@@ -17,7 +17,7 @@ vm3:
   - nmcli connection add type ethernet slave-type bond con-name bond99-eth1 ifname eth1 master bond99
   - nmcli connection add type ethernet slave-type bond con-name bond99-eth2 ifname eth2 master bond99
   - nmcli connection reload bond99
-  - bash -xc "until nmcli -g GENERAL.STATE conn show bond99 | grep activated; do sleep 1; done"
+  - timeout 30 bash -xc "until nmcli -g GENERAL.STATE conn show bond99 | grep activated; do sleep 1; done"
   - systemctl restart NetworkManager
   - /root/configure-ovs.sh OVNKubernetes  > /tmp/configure-ovs-output.txt 2>&1
   - nmstatectl show > /tmp/nmstate.txt
