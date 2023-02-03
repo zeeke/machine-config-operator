@@ -20,11 +20,13 @@ jobs:
       - name: Run kcli tests
         timeout-minutes: 30
         run: |
-          newgrp libvirt
-          cd test/kcli
           sudo kcli create pool -p /var/lib/libvirt/images default
           sudo kcli download image fedora37
+          newgrp libvirt <<EONG
+          id
+          cd test/kcli
           make runtest
+          EONG
       - name: Archive output folder
         uses: actions/upload-artifact@v3
         if: always()
