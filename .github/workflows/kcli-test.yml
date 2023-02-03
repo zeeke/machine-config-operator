@@ -9,13 +9,12 @@ jobs:
         #with:
         #  platforms: "x86-64"
         run: |
-          apt update
-          apt install qemu libvirt-daemon-system
+          sudo apt update
+          sudo apt install qemu libvirt-daemon-system
       - uses: actions/checkout@v2
       - name: Install kcli
         run: |
           curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | bash
-          kcli create sushy-service
       - name: Run kcli tests
         run: |
           cd test/kcli && make runtest
