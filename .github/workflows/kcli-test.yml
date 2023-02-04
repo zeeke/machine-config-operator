@@ -24,6 +24,7 @@ jobs:
         timeout-minutes: 30
         run: |
           id
+          ssh-keygen -b 2048 -t rsa -f ~/.ssh/testkey -q -N ""
           sudo kcli create pool -p /var/lib/libvirt/images default
           sudo kcli download image fedora37
           newgrp libvirt <<EONG
