@@ -26,9 +26,10 @@ jobs:
           id
           sudo kcli create pool -p /var/lib/libvirt/images default
           sudo kcli download image fedora37
+          ssh-keygen -b 2048 -t rsa -f ~/.ssh/testkey -N ""
+          ssh -vvv -p 444 localhost || true
           newgrp libvirt <<EONG
           id
-          ssh-keygen -b 2048 -t rsa -f ~/.ssh/testkey -N ""
           cd test/kcli
           make _output/configure-ovs.sh
           kcli create plan -f plans/single-nic.yml -Poutput_dir=`pwd`/_output/test
