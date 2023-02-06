@@ -6,8 +6,8 @@ jobs:
     steps:
       - name: Set up QEMU
         run: |
-          sudo apt update
-          sudo apt install qemu libvirt-daemon-system genisoimage
+          sudo apt-get update
+          sudo apt-get install -y qemu libvirt-daemon-system genisoimage
           id
           sudo adduser $USER libvirt
           id
