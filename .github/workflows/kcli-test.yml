@@ -28,6 +28,7 @@ jobs:
           sudo kcli download image fedora37
           ssh-keygen -b 2048 -t ed25519 -f ~/.ssh/testkey -N ""
           ssh -vvv -p 444 localhost || true
+          sudo cat /etc/ssh/ssh_config
           newgrp libvirt <<EONG
           id
           cd test/kcli
