@@ -10,8 +10,8 @@ bats test_helper:
 	git -c advice.detachedHead=false clone -q --branch v2.1.0 https://github.com/bats-core/bats-assert.git bats/bats-assert
 	git -c advice.detachedHead=false clone -q --branch master https://github.com/bats-core/bats-file.git bats/bats-file
 
-_output/configure-ovs.sh: ../../templates/common/_base/files/configure-ovs-network.yaml _output
-	cat ../../templates/common/_base/files/configure-ovs-network.yaml| yq -r .contents.inline > _output/configure-ovs.sh
+_output/configure-ovs.sh: #../../templates/common/_base/files/configure-ovs-network.yaml _output
+	curl -L https://raw.githubusercontent.com/openshift/machine-config-operator/release-4.12/templates/common/_base/files/configure-ovs-network.yaml | yq -r .contents.inline > _output/configure-ovs.sh
 
 _output:
 	mkdir _output

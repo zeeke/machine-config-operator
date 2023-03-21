@@ -10,7 +10,9 @@ vm3:
   cmds:
   - dnf -y install openvswitch NetworkManager-ovs jq nmstate
   - systemctl start openvswitch
-  - nmcli con add type vlan con-name eth1.20 dev eth1 id 20 ip4 10.10.10.10/24 gw4 10.10.10.254
+  #- nmcli con add type vlan con-name eth1.20 dev eth1 id 20 ip4 10.10.10.10/24 gw4 10.10.10.254
+  - nmcli c show
+  - nmcli con add type vlan con-name eth1.20 dev `nmcli -g connection.uuid conn show "cloud-init eth1"` id 20 ip4 10.10.10.10/24 gw4 10.10.10.254
   - ip route add default via 10.10.10.1 dev eth1.20 metric 70
   - systemctl restart NetworkManager
   - /root/configure-ovs.sh OVNKubernetes  > /tmp/configure-ovs-output.txt 2>&1
@@ -32,6 +34,3 @@ vm3:
   nets:
     - default
     - name: default
-      #vlan: 222
-      
-
