@@ -21,7 +21,7 @@ teardown() {
     output_dir="${DIR}/_output/${plan_name}"
     rm -rf -- "${output_dir}"
     mkdir -p "${output_dir}"
-    run kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
+    kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${output_dir}/configure-ovs-output.txt"
@@ -39,7 +39,7 @@ teardown() {
     output_dir="${DIR}/_output/${plan_name}"
     rm -rf -- "${output_dir}"
     mkdir -p "${output_dir}"
-    run kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
+    kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${output_dir}/configure-ovs-output.txt"
@@ -49,16 +49,16 @@ teardown() {
 
     nmstate_file="${output_dir}/nmstate.txt"
     assert_default_route_interface ${nmstate_file} "br-ex"
-    assert_brex_ip_matches ${nmstate_file} 10.10.10.10
+    assert_brex_ip_matches ${nmstate_file} 192.168.122.*
 }
 
-@test "VLAN" {
-    plan_name="vlan"
+@test "VLAN 1br" {
+    plan_name="vlan_1br"
 
     output_dir="${DIR}/_output/${plan_name}"
     rm -rf -- "${output_dir}"
     mkdir -p "${output_dir}"
-    run kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
+    kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${output_dir}/configure-ovs-output.txt"
@@ -68,27 +68,48 @@ teardown() {
 
     nmstate_file="${output_dir}/nmstate.txt"
     assert_default_route_interface ${nmstate_file} "br-ex"
-    assert_brex_ip_matches ${nmstate_file} 192.168.122.*
+    assert_brex_ip_matches ${nmstate_file} 10.10.10.10
 }
 
 
-@test "VLAN via NMState" {
-    plan_name="nmstate_vlan"
+@test "VLAN 2br" {
+    plan_name="vlan_2br"
 
     output_dir="${DIR}/_output/${plan_name}"
     rm -rf -- "${output_dir}"
     mkdir -p "${output_dir}"
-    run kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
+    kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${output_dir}/configure-ovs-output.txt"
     assert_file_contains "${output_file}" "Brought up connection br-ex successfully"
     assert_file_contains "${output_file}" "Brought up connection ovs-if-br-ex successfully"
-    assert_file_contains "${output_file}" "convert_to_bridge eth1.33 br-ex phys0 48"
+    assert_file_contains "${output_file}" "convert_to_bridge eth1.20 br-ex phys0 48"
+    assert_file_contains "${output_file}" "convert_to_bridge eth1.44 br-ex1 phys1 49"
 
     nmstate_file="${output_dir}/nmstate.txt"
     assert_default_route_interface ${nmstate_file} "br-ex"
-    assert_brex_ip_matches ${nmstate_file} 10.10.10.44
+    assert_brex_ip_matches ${nmstate_file} 10.10.10.10
+}
+
+@test "br-ex1 as VLAN of br-ex connection" {
+    plan_name="br-ex1_as_vlan_of_br-ex_connection"
+
+    output_dir="${DIR}/_output/${plan_name}"
+    rm -rf -- "${output_dir}"
+    mkdir -p "${output_dir}"
+    kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
+    cleanUpCmd="kcli delete -y vm vm3"
+
+    output_file="${output_dir}/configure-ovs-output.txt"
+    assert_file_contains "${output_file}" "Brought up connection br-ex successfully"
+    assert_file_contains "${output_file}" "Brought up connection ovs-if-br-ex successfully"
+    assert_file_contains "${output_file}" "convert_to_bridge eth0 br-ex phys0 48"
+    assert_file_contains "${output_file}" "convert_to_bridge eth0.55 br-ex1 phys1 49"
+
+    nmstate_file="${output_dir}/nmstate.txt"
+    assert_default_route_interface ${nmstate_file} "br-ex"
+    assert_brex_ip_matches ${nmstate_file} 192.168.122.*
 }
 
 @test "Bond VLAN 2nd bridge" {
@@ -97,7 +118,7 @@ teardown() {
     output_dir="${DIR}/_output/${plan_name}"
     rm -rf -- "${output_dir}"
     mkdir -p "${output_dir}"
-    run kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
+    kcli create plan -f plans/${plan_name}.yml -P output_dir="${output_dir}"
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${output_dir}/configure-ovs-output.txt"

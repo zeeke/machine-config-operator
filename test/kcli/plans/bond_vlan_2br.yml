@@ -3,12 +3,12 @@ parameters:
   output_dir: ../_output/test
 
 vm3:
-  image: fedora36
+  image: fedora37
   numcpus: 2
   memory: 2048
   # output logs from following commands can be found in guest path /var/log/cloud-init-output.log
   cmds:
-  - dnf -y install -x NetworkManager openvswitch NetworkManager-ovs jq nmstate
+  - dnf -y install openvswitch NetworkManager-ovs jq nmstate
   - systemctl start openvswitch
   - nmcli connection down "cloud-init eth1"
   - nmcli connection down "cloud-init eth2"
