@@ -19,7 +19,6 @@ vm3:
   - nmcli connection reload "con bond99"
   - timeout 30 bash -xc 'until nmcli -g GENERAL.STATE conn show "con bond99" | grep activated; do sleep 1; done'
   - nmcli con add type vlan con-name bond99.777 dev `nmcli -g connection.uuid conn show "con bond99"` id 777 ip4 10.10.10.10/24 gw4 10.10.10.254
-  #- ip route add default via 10.10.10.1 dev bond99.777 metric 120
   - systemctl restart NetworkManager
   - mkdir -p /etc/ovnk
   - echo "bond99.777" > /etc/ovnk/extra_bridge
