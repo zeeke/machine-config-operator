@@ -2,7 +2,7 @@
 WHAT ?= .*
 runtest: bats _artifacts/configure-ovs.sh
 	kcli download image fedora37
-	./bats/bats-core/bin/bats -T --verbose-run --filter "$(WHAT)" configure-ovs-network-test.bats
+	./bats/bats-core/bin/bats --timing --verbose-run --filter "$(WHAT)" configure-ovs-network-test.bats
 
 bats test_helper:
 	git -c advice.detachedHead=false clone -q --branch v1.8.2 https://github.com/bats-core/bats-core.git bats/bats-core

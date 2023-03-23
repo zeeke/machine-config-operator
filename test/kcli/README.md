@@ -27,8 +27,8 @@ WHAT="Bonding NICs" make runtest
 To create and destroy a test environment using a virtual machine, run the following `kcli` commands:
 
 ```sh
-mkdir -p _output/test
-kcli create plan -f plans/single-nic.yml
+mkdir -p _artifacts/test
+kcli create plan
 kcli ssh vm3
 
 # and when you finished

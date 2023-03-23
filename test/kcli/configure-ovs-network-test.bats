@@ -19,10 +19,6 @@ teardown() {
     run ${cleanUpCmd}
 }
 
-@test "fake Stomcasti with strange name$%^" {
-    env > /tmp/toh2
-}
-
 @test "Single NIC" {
     kcli create plan -P output_dir="${testArtifactDir}" -P run_configure_ovs=true 
     cleanUpCmd="kcli delete -y vm vm3"
@@ -271,12 +267,6 @@ EOT
     assert_brex_ip_matches ${nmstate_file} 192.168.122.*
 }
 
-run_configureovs_on_vm() {
-    nmstate_file=$1
-    output_dir=$2
-
-
-}
 
 assert_brex_ip_matches() {
     local -r nmstate_file="$1"
