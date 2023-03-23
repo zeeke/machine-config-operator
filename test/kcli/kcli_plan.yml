@@ -1,0 +1,71 @@
+
+parameters:
+  output_dir: ./_artifacts/test
+  input_nmstate_file: 
+  secondary_bridge_interface: 
+  run_configure_ovs: false
+
+stomacasti:
+  type: image
+  name: stomacasti
+  url: http://mirror.uv.es/mirror/fedora/linux/releases/37/Cloud/x86_64/images/Fedora-Cloud-Base-37-1.7.x86_64.qcow2
+  cmd: dnf -y install openvswitch NetworkManager-ovs jq nmstate; systemctl enable openvswitch
+
+vm3:
+  image: fedora37
+  numcpus: 2
+  memory: 2048
+  # output logs from following commands can be found in guest path /var/log/cloud-init-output.log
+  cmds:
+  - dnf -y install openvswitch NetworkManager-ovs jq nmstate
+  - systemctl start openvswitch
+  - systemctl restart NetworkManager
+
+  {% if input_nmstate_file %}
+  - nmstatectl apply /root/input_nmstate.yml
+  # Wait for transient connection states
+  - timeout 30 bash -xc 'while nmcli -g all conn | grep activating; do sleep 1; done'
+  {% endif %}
+  
+  {% if secondary_bridge_interface %}
+  - mkdir -p /etc/ovnk
+  - echo "{{ secondary_bridge_interface }}" > /etc/ovnk/extra_bridge
+  {% endif %}
+  
+  {% if run_configure_ovs %}
+  - /root/configure-ovs.sh OVNKubernetes  > /tmp/configure-ovs-output.txt 2>&1
+  - nmstatectl show > /tmp/nmstate.txt
+  {% endif %}
+
+  files:
+    - origin: ./_artifacts/configure-ovs.sh
+      path: /root/configure-ovs.sh
+      render: False
+      mode: 755
+
+    {% if input_nmstate_file %}
+    - origin: {{ input_nmstate_file }}
+      path: /root/input_nmstate.yml
+    {% endif %}    
+  
+  finishfiles:
+  - origin: /var/log/cloud-init-output.log
+    path: {{ output_dir }}/cloud-init-output.log
+  
+  {% if run_configure_ovs %}
+  - origin: /tmp/configure-ovs-output.txt
+    path: {{ output_dir }}/configure-ovs-output.txt
+  - origin: /tmp/nmstate.txt
+    path: {{ output_dir }}/nmstate.txt
+  {% endif %}
+    
+  wait: true
+  waitcommand: grep "kcli boot finished" /var/log/cloud-init-output.log
+
+  user: root
+  nets:
+    - default
+    - name: default
+      noconf: true
+    - name: default
+      noconf: true
