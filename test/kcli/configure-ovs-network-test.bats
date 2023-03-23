@@ -80,28 +80,46 @@ EOT
 }
 
 @test "VLAN 1br" {
-    case_name="vlan_1br"
-    output_dir="${DIR}/_artifacts/${case_name}"
-    rm -rf -- "${testArtifactDir}"
-    mkdir -p "${testArtifactDir}"
 
-    cat <<EOT >> greetings.txt
-line 1
-line 2
+    cat <<EOT >> ${testArtifactDir}/input_nmstate.yml
+routes:
+  config:
+  - destination: 0.0.0.0/0
+    next-hop-address: 10.10.10.254
+    next-hop-interface: eth1.22
+    metric: 75
+    table-id: 254
+
+interfaces:
+- name: eth1.22
+  type: vlan
+  state: up
+  ipv4:
+    dhcp: false
+    enabled: true
+    address:
+    - ip: 10.10.10.22
+      prefix-length: 24
+  vlan:
+    base-iface: eth0
+    id: 22
 EOT
 
     
-    kcli create plan -P output_dir="${testArtifactDir}" -P input_nmstate_file="${DIR}/nmstate/vlan_eth20.yml"
+    kcli create plan \
+        -P output_dir="${testArtifactDir}" \
+        -P input_nmstate_file="${testArtifactDir}/input_nmstate.yml" \
+        -P run_configure_ovs=true
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${testArtifactDir}/configure-ovs-output.txt"
     assert_file_contains "${output_file}" "Brought up connection br-ex successfully"
     assert_file_contains "${output_file}" "Brought up connection ovs-if-br-ex successfully"
-    assert_file_contains "${output_file}" "convert_to_bridge eth1.20 br-ex phys0 48"
+    assert_file_contains "${output_file}" "convert_to_bridge eth1.22 br-ex phys0 48"
 
     nmstate_file="${testArtifactDir}/nmstate.txt"
     assert_default_route_interface ${nmstate_file} "br-ex"
-    assert_brex_ip_matches ${nmstate_file} 10.10.10.10
+    assert_brex_ip_matches ${nmstate_file} 10.10.10.22
 }
 
 
