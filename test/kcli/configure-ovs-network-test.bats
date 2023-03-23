@@ -216,19 +216,55 @@ EOT
 }
 
 @test "Bond VLAN 2nd bridge" {
-    plan_name="bond_vlan_2br"
+        cat <<EOT >> ${testArtifactDir}/input_nmstate.yml
+routes:
+  config:
+  - destination: 0.0.0.0/0
+    next-hop-address: 192.168.122.1
+    next-hop-interface: bond99
+    metric: 75
+    table-id: 254
 
-    output_dir="${DIR}/_artifacts/${plan_name}"
-    rm -rf -- "${testArtifactDir}"
-    mkdir -p "${testArtifactDir}"
-    kcli create plan -f plans/${plan_name}.yml -P output_dir="${testArtifactDir}"
+interfaces:
+- name: bond99
+  type: bond
+  state: up
+  ipv4:
+    dhcp: true
+    enabled: true
+  link-aggregation:
+    mode: 802.3ad
+    options:
+      miimon: '100'
+    port:
+    - eth1
+    - eth2
+- name: bond99.77
+  type: vlan
+  state: up
+  ipv4:
+    dhcp: false
+    enabled: true
+    address:
+    - ip: 10.10.77.77
+      prefix-length: 24
+  vlan:
+    base-iface: bond99
+    id: 77
+EOT
+
+    kcli create plan \
+        -P output_dir="${testArtifactDir}" \
+        -P input_nmstate_file="${testArtifactDir}/input_nmstate.yml" \
+        -P run_configure_ovs=true \
+        -P secondary_bridge_interface=bond99.77
     cleanUpCmd="kcli delete -y vm vm3"
 
     output_file="${testArtifactDir}/configure-ovs-output.txt"
     assert_file_contains "${output_file}" "Brought up connection br-ex successfully"
     assert_file_contains "${output_file}" "Brought up connection ovs-if-br-ex successfully"
     assert_file_contains "${output_file}" "convert_to_bridge bond99 br-ex phys0 48"
-    assert_file_contains "${output_file}" "convert_to_bridge bond99.777 br-ex1 phys1 49"
+    assert_file_contains "${output_file}" "convert_to_bridge bond99.77 br-ex1 phys1 49"
 
     nmstate_file="${testArtifactDir}/nmstate.txt"
     assert_default_route_interface ${nmstate_file} "br-ex"
